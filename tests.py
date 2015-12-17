@@ -11,3 +11,9 @@ def test_attending():
 
 
 
+def test_attending():
+    import attending
+    import this
+    attending.concur()
+    assert this.__doc__ != None
+    assert this.__doc__.endswith("I concur.")
