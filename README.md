@@ -1,19 +1,14 @@
-# Attending
-## The docs in!
+<img src="attending_logo.jpg" align="right">
 
+# attending: the docs in!
 
+Better docstrings with an impeccable bedside manner.
+
+A python package which brings better docstrings with an impeccable bedside manner.
+
+The `attending` supervises other docs, and has the last word.
 
 ## Improving the quality of resident docs.
-
-attending physician
-Etymology: L, attendere, to stretch
-the physician who is responsible for a particular patient. In a university
-hospital setting, an attending physician often also has teaching
-responsibilities, holds a faculty appointment, and supervises residents and
-medical students. Also called
-Usage notes: (informal)
-attending.
-Mosby's Medical Dictionary, 9th edition. © 2009, Elsevier.
 
 Batteries included, instruction may be not...
 
@@ -61,4 +56,25 @@ ela.pid.life - some fangs for your python!
 
 ## What about incompatible changes across versions?
 
+## Is it possible to end up with docs that don't match the implementation?
+
+In this respect, `attending` docs are no different from the regular docs. They
+may fall out of sync as libraries change. 
+
+[ ] doctest the new docs strings?
+
 ## What about different versions of the language?
+
+## Why's it called `attending`?
+
+
+<dl>
+<dt>attending physician:</dt>
+<dd>the physician who is responsible for a particular patient. In a university
+hospital setting, an attending physician often also has teaching
+responsibilities, holds a faculty appointment, and supervises residents and
+medical students. Also called `attending`.</dd>
+Mosby's Medical Dictionary
+</dl>
+
+The `attending` supervises other docs...  and has the last word.
