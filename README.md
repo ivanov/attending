@@ -78,3 +78,8 @@ Mosby's Medical Dictionary
 </dl>
 
 The `attending` supervises other docs...  and has the last word.
+
+[ ] import hook: have attending pay attention to the libraries used as they are
+    imported.
+
+
