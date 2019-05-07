@@ -49,4 +49,8 @@ medical students. Also called `attending`.</dd>
 Mosby's Medical Dictionary
 </dl>
 
+# Related projects
+
+[zealdocs](https://zealdocs.org/) - "an offline documentation browser for software developers."
+
 
