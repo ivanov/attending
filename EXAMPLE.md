@@ -20,7 +20,7 @@ How to get the docs:
 >>> foobar in library
 False
 >>>
->>> library.fetch(boobar)
+>>> library.fetch(foobar)
 <attending.doc.Doc object at 0x100fb8d68>
 >>> foobar in library
 True
