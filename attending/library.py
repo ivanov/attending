@@ -1,34 +1,43 @@
+import importlib
 import pkg_resources
 from pathlib import Path
 from functools import wraps
 
+from types import ModuleType
+
 from .downloader import write_to_file
 from .doc import Module
 
-MONITOR_ERROR="""'{0}' needs both __doc_url__  and __version__ defined. It has
+MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 {0}.__doc_url__ = {1}
 {0}.__version__ = {2}
 """
 
+
+def get_module_version(module):
+    if hasattr(module, "__version__"):
+        return module.__version__
+    try:
+        # Couldn't get __version__ from module
+        # We can either:
+        # Use pkg_resources to get it
+        name = module if isinstance(module, str) else module.__name__
+        return pkg_resources.working_set.by_key[name].version
+    except KeyError:
+        # Assume it's the latest from PyPI
+        return "latest"
+
+
 def can_monitor(module):
-    return hasattr(module, "__doc_url__") and hasattr(module, "__version__")
+    return hasattr(module, "__doc_url__")
+
 
 def cannot_monitor(module):
     msg = MONITOR_ERROR.format(module.__name__,
-            getattr(module, "__doc_url__", None),
-            getattr(module, "__version__", None))
+                               getattr(module, "__doc_url__", None),
+                               get_module_version(module))
 
     return ValueError(msg)
-
-def _requires_valid_module(f):
-    @wraps(f)
-    def __(library, module, *args, **kwargs):
-        if not can_monitor(module):
-            # TODO fallback here
-            raise cannot_monitor(module)
-        return f(library, module, *args, **kwargs)
-
-    return __
 
 
 class Library:
@@ -37,44 +46,41 @@ class Library:
         if not self.location.exists():
             self.location.mkdir(parents=True)
 
-        self.docs = {module.name: Module(self.location, module.name) for module in self.location.iterdir() if
-                     module.is_dir()}
+    def fetch(self, name, version, url):
+        if not self.in_collection(name, version):
+            self._add_project(name, version, url)
+        return self.get_edition(name, version)
 
-    @_requires_valid_module
-    def fetch(self, module):
-        if module not in self:
-            self._add_project(module)
-        return self[module]
-
-    def _add_project(self, module):
-        destination = self.location / module.__name__ / module.__version__
+    def _add_project(self, name, version, url):
+        destination = self.location / name / version
         if destination.exists():
             raise FileExistsError(f"{destination}")
         destination.mkdir(parents=True)
-        write_to_file(self.location, module.__name__, module.__version__, module.__doc_url__)
-        self.docs[module.__name__] = Module(self.location, module.__name__)
+        write_to_file(self.location, name, version, url)
 
-    @_requires_valid_module
-    def __delitem__(self, module):
-        doc = self[module]
-        if not len(self.docs[module.__name__]):
-            del self.docs[module.__name__]
-        doc.retire()
+    def retire(self, name, version):
+        self.get_edition(name, version).retire()
 
-    @_requires_valid_module
-    def retire(self, module):
-        del self[module]
+    def in_collection(self, name, version):
+        module_dir = self.location / name
+        if not module_dir.is_dir():
+            return False
+        return (module_dir / version).is_dir()
 
-    def __repr__(self):
-        return str(self.docs)
+    def get_edition(self, name, version):
+        if not self.in_collection(name, version):
+            raise KeyError
+        return Module(self.location, name)[version]
 
-    @_requires_valid_module
-    def __contains__(self, module):
-        return module.__name__ in self.docs and module in self.docs[module.__name__]
 
-    @_requires_valid_module
-    def __getitem__(self, module):
-        return self.docs[module.__name__][module]
+def attending_doc(module, version=None):
+    if version is None:
+        version = get_module_version(module)
+    lib = Library()
+    if isinstance(module, ModuleType):
+        return lib.get_edition(module.__name__, version)
+    else:
+        return lib.get_edition(module, version)
 
 
 def fetch(module, version=None):
@@ -88,7 +94,6 @@ def fetch(module, version=None):
     version: string, optional
         The version for `module`, will fall-back to latest, if not specified.
     """
-    from types import ModuleType
     if isinstance(module, ModuleType):
         return fetch_via_module(module, version)
     else:
@@ -110,28 +115,19 @@ def fetch_via_module(module, version=None):
     mod_name = module.__name__
 
     if version is None:
-        # First, let's try
-        version = getattr(module, '__version__', None)
+        version = get_module_version(module)
 
-    if version is None:
-        # Couldn't get __version__ from module
-        # We can either:
-        # 1. Assume it's the latest from PyPI
-        # 2. Use pkg_resources to get it
-        #
-        # Let's do 2, for now
-        version = pkg_resources.working_set.by_key[mod_name].version
-
-    destination = lib.location / mod_name / version
-    destination.mkdir(parents=True)
     if hasattr(module, "__doc_url__"):
-        write_to_file(lib.location, mod_name, version, module.__doc_url__)
+        __doc__url__ = module.__doc_url__
+        lib.fetch(mod_name, version, __doc__url__)
     else:
-        #try our fall back
+        # try our fall back
         raise NotImplementedError("TODO: fetch using fallback from PyPI")
-    lib.docs[module.__name__] = Module(self.location, module.__name__)
 
-def fetch_via_name(module, version=None):
+    return lib.get_edition(mod_name, version)
+
+
+def fetch_via_name(module, version=None, url=None):
     """
     Fetch the docs for a given imported module
 
@@ -141,15 +137,19 @@ def fetch_via_name(module, version=None):
         The module whose docs we want to pull up
     version: string, optional
         The version for `module`, will fall-back to current, if not specified.
+    url: string, optional
+        The location to retrieve the docs from, defaults to what the package specifies
     """
     lib = Library()
-    #TODO: try to import the module and use fetch_via_module
     if version is None:
-        if module in pkg_resources.working_set.by_key:
-            version = pkg_resources.working_set.by_key[mod_name].version
-        else:
-            raise NotImplementedError("TODO: fetch version from PyPI")
-    destination = lib.location / module / version
-    destination.mkdir(parents=True)
-    raise NotImplementedError("TODO: fetch using fallback from PyPI")
-    lib.docs[module.__name__] = Module(self.location, module.__name__)
+        version = get
+
+    if url is None:
+        # url was not given to us so we must assume that it is already installed and use that
+        try:
+            python_module = importlib.import_module(module)
+        except ImportError:
+            raise NotImplementedError("TODO: fetch using fallback")
+        return fetch_via_module(python_module, version)
+    else:
+        return lib.fetch(module, version, url)

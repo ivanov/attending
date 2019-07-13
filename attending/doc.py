@@ -26,7 +26,7 @@ class Doc(metaclass=_Cached):
         self.version = version
 
     def diagnose(self):
-        webbrowser.open("file://" +str(self.base_path / self.name / self.version))
+        webbrowser.open("file://" + str(self.base_path / self.name / self.version))
 
     def retire(self):
         shutil.rmtree(self.base_path / self.name / self.version)
@@ -42,6 +42,15 @@ class Module(metaclass=_Cached):
         return [Doc(self.base_path, self.name, version.name) for version in (self.base_path / self.name).iterdir() if
                 version.is_dir()]
 
+    def exists(self, version):
+        candidate = self.base_path / self.name / version
+        return candidate.is_dir() and os.listdir(candidate)
+
+    def version(self, version):
+        if self.exists(version):
+            return Doc(self.base_path, self.name, version)
+        raise KeyError
+
     def __len__(self):
         return len(self.versions())
 
@@ -52,14 +61,11 @@ class Module(metaclass=_Cached):
         doc = self[module]
         doc.retire()
 
-    def __contains__(self, module):
-        candidate = self.base_path / self.name / module.__version__
-        return candidate.is_dir() and len(os.listdir(str(candidate)))
+    def __contains__(self, version):
+        return self.exists(version)
 
-    def __getitem__(self, module):
-        if module in self:
-            return Doc(self.base_path, self.name, module.__version__)
-        raise KeyError()  # TODO give this a message
+    def __getitem__(self, version):
+        return self.version(version)
 
     def __str__(self):
         return self.name
