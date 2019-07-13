@@ -1,7 +1,7 @@
 # Attending: The Docs in!
 Attending allows packages to self describe documentation through  the `__version__` and `__doc_url__` module attributes. 
 
-Attending has two example projects, `foobar` and `fizbuz`. This guid will show how to consumes docs from these example 
+Attending has two example projects, `foobar` and `fizbuz`. This guide will show how to consume docs from these example
 projects. 
 
 ## The lay of the land
