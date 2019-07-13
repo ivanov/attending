@@ -1,3 +1,4 @@
+import pkg_resources
 from pathlib import Path
 from functools import wraps
 
@@ -14,8 +15,8 @@ def can_monitor(module):
 
 def cannot_monitor(module):
     msg = MONITOR_ERROR.format(module.__name__,
-            module.__dict__.get("__doc_url__"),
-            module.__dict__.get("__version__"))
+            getattr(module, "__doc_url__", None),
+            getattr(module, "__version__", None))
 
     return ValueError(msg)
 
@@ -74,3 +75,81 @@ class Library:
     @_requires_valid_module
     def __getitem__(self, module):
         return self.docs[module.__name__][module]
+
+
+def fetch(module, version=None):
+    """
+    A convenience top-level function for fetching docs
+
+    Parameters
+    ----------
+    module : string or module
+        The module whose docs we want to pull up
+    version: string, optional
+        The version for `module`, will fall-back to latest, if not specified.
+    """
+    from types import ModuleType
+    if isinstance(module, ModuleType):
+        return fetch_via_module(module, version)
+    else:
+        return fetch_via_name(module, version)
+
+
+def fetch_via_module(module, version=None):
+    """
+    Fetch the docs for a given imported module
+
+    Parameters
+    ----------
+    module : module
+        The module whose docs we want to pull up
+    version: string, optional
+        The version for `module`, will fall-back to current, if not specified.
+    """
+    lib = Library()
+    mod_name = module.__name__
+
+    if version is None:
+        # First, let's try
+        version = getattr(module, '__version__', None)
+
+    if version is None:
+        # Couldn't get __version__ from module
+        # We can either:
+        # 1. Assume it's the latest from PyPI
+        # 2. Use pkg_resources to get it
+        #
+        # Let's do 2, for now
+        version = pkg_resources.working_set.by_key[mod_name].version
+
+    destination = lib.location / mod_name / version
+    destination.mkdir(parents=True)
+    if hasattr(module, "__doc_url__"):
+        write_to_file(lib.location, mod_name, version, module.__doc_url__)
+    else:
+        #try our fall back
+        raise NotImplementedError("TODO: fetch using fallback from PyPI")
+    lib.docs[module.__name__] = Module(self.location, module.__name__)
+
+def fetch_via_name(module, version=None):
+    """
+    Fetch the docs for a given imported module
+
+    Parameters
+    ----------
+    module : string
+        The module whose docs we want to pull up
+    version: string, optional
+        The version for `module`, will fall-back to current, if not specified.
+    """
+    lib = Library()
+    #TODO: try to import the module and use fetch_via_module
+    if version is None:
+        if module in pkg_resources.working_set.by_key:
+            version = pkg_resources.working_set.by_key[mod_name].version
+        else:
+            raise NotImplementedError("TODO: fetch version from PyPI")
+    destination = lib.location / module / version
+    destination.mkdir(parents=True)
+    raise NotImplementedError("TODO: fetch using fallback from PyPI")
+    lib.docs[module.__name__] = Module(self.location, module.__name__)
