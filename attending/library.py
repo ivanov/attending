@@ -15,8 +15,8 @@ def can_monitor(module):
 
 def cannot_monitor(module):
     msg = MONITOR_ERROR.format(module.__name__,
-            module.__dict__.get("__doc_url__"),
-            module.__dict__.get("__version__"))
+            getattr(module, "__doc_url__", None),
+            getattr(module, "__version__", None))
 
     return ValueError(msg)
 
@@ -77,7 +77,7 @@ class Library:
         return self.docs[module.__name__][module]
 
 
-def fetch(module, version=None)
+def fetch(module, version=None):
     """
     A convenience top-level function for fetching docs
 
@@ -111,7 +111,7 @@ def fetch_via_module(module, version=None):
 
     if version is None:
         # First, let's try
-        version = module.__dict__.get('__version__')
+        version = getattr(module, '__version__', None)
 
     if version is None:
         # Couldn't get __version__ from module
