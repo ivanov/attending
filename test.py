@@ -1,17 +1,12 @@
 import foobar
 import fizbuz
+import versionless
+import latest
 
-from attending import Library
+from attending import fetch, fetch_via_module
 
-library = Library()
+fetch(foobar)
+fetch_via_module(fizbuz).diagnose()
 
-print(f"foobar managed by attending? {foobar in library}")
-print("fetching foobar's docs")
-library.fetch(foobar)
-print(f"foobar managed by attending? {foobar in library}")
-
-print(f"fizbuz managed by attending? {fizbuz in library}")
-print("fizbuz foobar's docs")
-library.fetch(fizbuz)
-print(f"fizbuz managed by attending? {fizbuz in library}")
-library[fizbuz].diagnose()
+fetch(latest)
+fetch_via_module(versionless)
