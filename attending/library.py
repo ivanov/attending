@@ -1,3 +1,4 @@
+import importlib
 import pkg_resources
 from pathlib import Path
 from functools import wraps
@@ -37,17 +38,6 @@ def cannot_monitor(module):
                                get_module_version(module))
 
     return ValueError(msg)
-
-
-def _requires_valid_module(f):
-    @wraps(f)
-    def __(library, module, *args, **kwargs):
-        if not can_monitor(module):
-            # TODO fallback here
-            raise cannot_monitor(module)
-        return f(library, module, *args, **kwargs)
-
-    return __
 
 
 class Library:
@@ -137,10 +127,7 @@ def fetch_via_module(module, version=None):
     return lib.get_edition(mod_name, version)
 
 
-use_module_url = None
-
-
-def fetch_via_name(module, version=None, url=use_module_url):
+def fetch_via_name(module, version=None, url=None):
     """
     Fetch the docs for a given imported module
 
@@ -150,7 +137,7 @@ def fetch_via_name(module, version=None, url=use_module_url):
         The module whose docs we want to pull up
     version: string, optional
         The version for `module`, will fall-back to current, if not specified.
-    url:
+    url: string, optional
         The location to retrieve the docs from, defaults to what the package specifies
     """
     lib = Library()
@@ -159,8 +146,10 @@ def fetch_via_name(module, version=None, url=use_module_url):
 
     if url is None:
         # url was not given to us so we must assume that it is already installed and use that
-        import importlib
-        python_module = importlib.import_module(module)
+        try:
+            python_module = importlib.import_module(module)
+        except ImportError:
+            raise NotImplementedError("TODO: fetch using fallback")
         return fetch_via_module(python_module, version)
     else:
         return lib.fetch(module, version, url)

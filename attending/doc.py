@@ -44,7 +44,7 @@ class Module(metaclass=_Cached):
 
     def exists(self, version):
         candidate = self.base_path / self.name / version
-        return candidate.is_dir() and len(os.listdir(str(candidate)))
+        return candidate.is_dir() and os.listdir(candidate)
 
     def version(self, version):
         if self.exists(version):
