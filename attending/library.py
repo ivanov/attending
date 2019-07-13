@@ -4,6 +4,7 @@ from functools import wraps
 from .downloader import write_to_file
 from .doc import Module
 
+MONITOR_ERROR="This package needs both __doc_url__ and __version__ defined."
 
 def can_monitor(module):
     return hasattr(module, "__doc_url__") and hasattr(module, "__version__")
@@ -13,7 +14,8 @@ def _requires_valid_module(f):
     @wraps(f)
     def __(library, module, *args, **kwargs):
         if not can_monitor(module):
-            raise ValueError()  # TODO give better message
+            # TODO fallback here
+            raise ValueError(MONITOR_ERROR)
         return f(library, module, *args, **kwargs)
 
     return __
