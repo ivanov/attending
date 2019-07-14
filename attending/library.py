@@ -7,6 +7,7 @@ from types import ModuleType
 
 from .downloader import write_to_file
 from .doc import Module
+from .fallback import get_doc_url
 
 MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 {0}.__doc_url__ = {1}
@@ -38,6 +39,10 @@ def cannot_monitor(module):
                                get_module_version(module))
 
     return ValueError(msg)
+
+
+def options_exhausted(module):
+    return RuntimeError(f"Failed not find fallback url for {module}")
 
 
 class Library:
@@ -121,8 +126,9 @@ def fetch_via_module(module, version=None):
         __doc__url__ = module.__doc_url__
         lib.fetch(mod_name, version, __doc__url__)
     else:
-        # try our fall back
-        raise NotImplementedError("TODO: fetch using fallback from PyPI")
+        #try our fall back
+        url = get_doc_url(mod_name)
+        write_to_file(lib.location, mod_name, version, url)
 
     return lib.get_edition(mod_name, version)
 
@@ -142,14 +148,18 @@ def fetch_via_name(module, version=None, url=None):
     """
     lib = Library()
     if version is None:
-        version = get
+        version = get_module_version(module)
 
     if url is None:
         # url was not given to us so we must assume that it is already installed and use that
         try:
             python_module = importlib.import_module(module)
         except ImportError:
-            raise NotImplementedError("TODO: fetch using fallback")
-        return fetch_via_module(python_module, version)
-    else:
-        return lib.fetch(module, version, url)
+            url = get_doc_url(module)
+            if url is None:
+                raise options_exhausted(module, version)
+        else:
+            return fetch_via_module(python_module, version)
+    
+    return lib.fetch(module, version, url)
+

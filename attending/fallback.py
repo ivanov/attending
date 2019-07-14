@@ -6,7 +6,6 @@ import json
 from urllib.request import urlopen
 
 
-
 # By default this'll be pypi.org, but can be package index mirror, or an
 # internal package index.
 API_BASE_URL = "https://pypi.org"
@@ -28,7 +27,8 @@ def get_json(project):
 
     return json.load(resp)
 
-data = get_json("ipython")
-data["info"]["project_urls"]["Documentation"]
+def get_doc_url(project):
+    data = get_json(project)
+    return data["info"]["project_urls"].get("Documentation")
 
 
