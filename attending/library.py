@@ -7,6 +7,7 @@ from types import ModuleType
 from .downloader import write_to_file
 from .doc import Module
 from .fallback import get_doc_url
+from .index import load_attending_index
 
 MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 {0}.__doc_url__ = {1}
@@ -125,7 +126,7 @@ def fetch_via_module(module, version=None):
         __doc_url__ = module.__doc_url__
         lib.fetch(mod_name, version, __doc_url__)
     else:
-        #try our fall back
+        # try our fall back
         url = get_doc_url(mod_name)
         write_to_file(lib.location, mod_name, version, url)
 
@@ -159,6 +160,11 @@ def fetch_via_name(module, version=None, url=None):
                 raise options_exhausted(module, version)
         else:
             return fetch_via_module(python_module, version)
-    
+
     return lib.fetch(module, version, url)
 
+
+def fetch_via_local_index(module):
+    index = load_attending_index()
+    if module in index:
+        fetch_via_name(module, url=index[module])
