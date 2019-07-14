@@ -90,8 +90,5 @@ def test_module_versions(module_fixture):
     assert len(module) == 1
 
     # confirm that second doc retired
-
     del module[version_1]
     assert not len(module)
-
-

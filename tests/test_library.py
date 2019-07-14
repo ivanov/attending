@@ -19,7 +19,7 @@ def lib_fixture():
 
 
 def test_library_fetch(ipython, lib_fixture):
-    name, version, __doc__url__ = ipython
+    name, version, __doc_url__ = ipython
 
     # check that library does not have doc
     lib = Library(home=lib_fixture)
@@ -28,12 +28,12 @@ def test_library_fetch(ipython, lib_fixture):
         lib.get_edition(name, version)
 
     # get the doc and check that we have it
-    lib.fetch(name, version, __doc__url__)
+    lib.fetch(name, version, __doc_url__)
     assert (lib_fixture / ".attending" / name / version).exists()
     assert lib.get_edition(name, version)
 
     # verifying that getting the doc again is idempotent
-    lib.fetch(name, version, __doc__url__)
+    lib.fetch(name, version, __doc_url__)
     assert (lib_fixture / ".attending" / name / version).exists()
     assert lib.get_edition(name, version)
 

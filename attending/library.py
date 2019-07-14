@@ -122,8 +122,8 @@ def fetch_via_module(module, version=None):
         version = get_module_version(module)
 
     if hasattr(module, "__doc_url__"):
-        __doc__url__ = module.__doc_url__
-        lib.fetch(mod_name, version, __doc__url__)
+        __doc_url__ = module.__doc_url__
+        lib.fetch(mod_name, version, __doc_url__)
     else:
         #try our fall back
         url = get_doc_url(mod_name)
