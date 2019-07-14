@@ -1,7 +1,6 @@
 import importlib
 import pkg_resources
 from pathlib import Path
-from functools import wraps
 
 from types import ModuleType
 
