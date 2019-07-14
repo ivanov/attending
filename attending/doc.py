@@ -54,7 +54,7 @@ class Module(metaclass=_Cached):
     def __len__(self):
         return len(self.versions())
 
-    def _retire(self):
+    def remove(self):
         shutil.rmtree(self.base_path / self.name)
 
     def __delitem__(self, module):
