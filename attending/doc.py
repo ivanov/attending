@@ -57,8 +57,8 @@ class Module(metaclass=_Cached):
     def remove(self):
         shutil.rmtree(self.base_path / self.name)
 
-    def __delitem__(self, module):
-        doc = self[module]
+    def __delitem__(self, version):
+        doc = self[version]
         doc.retire()
 
     def __contains__(self, version):
