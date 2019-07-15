@@ -7,7 +7,7 @@ from types import ModuleType
 from .downloader import write_to_file
 from .doc import Module
 from .fallback import get_doc_url
-from .index import load_attending_index
+from .index import load_attending_index, load_index
 
 MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 {0}.__doc_url__ = {1}
@@ -78,17 +78,17 @@ class Library:
         return Module(self.location, name)[version]
 
 
-def attending_doc(module, version=None):
+def attending_doc(module, version=None, home=Path().home()):
     if version is None:
         version = get_module_version(module)
-    lib = Library()
+    lib = Library(home=home)
     if isinstance(module, ModuleType):
         return lib.get_edition(module.__name__, version)
     else:
         return lib.get_edition(module, version)
 
 
-def fetch(module, version=None):
+def fetch(module, version=None, home=Path().home()):
     """
     A convenience top-level function for fetching docs
 
@@ -100,12 +100,12 @@ def fetch(module, version=None):
         The version for `module`, will fall-back to latest, if not specified.
     """
     if isinstance(module, ModuleType):
-        return fetch_via_module(module, version)
+        return fetch_via_module(module, version, home=home)
     else:
-        return fetch_via_name(module, version)
+        return fetch_via_name(module, version, home=home)
 
 
-def fetch_via_module(module, version=None):
+def fetch_via_module(module, version=None, home=Path().home()):
     """
     Fetch the docs for a given imported module
 
@@ -116,7 +116,7 @@ def fetch_via_module(module, version=None):
     version: string, optional
         The version for `module`, will fall-back to current, if not specified.
     """
-    lib = Library()
+    lib = Library(home=home)
     mod_name = module.__name__
 
     if version is None:
@@ -133,7 +133,7 @@ def fetch_via_module(module, version=None):
     return lib.get_edition(mod_name, version)
 
 
-def fetch_via_name(module, version=None, url=None):
+def fetch_via_name(module, version=None, url=None, home=Path().home()):
     """
     Fetch the docs for a given imported module
 
@@ -146,7 +146,7 @@ def fetch_via_name(module, version=None, url=None):
     url: string, optional
         The location to retrieve the docs from, defaults to what the package specifies
     """
-    lib = Library()
+    lib = Library(home=home)
     if version is None:
         version = get_module_version(module)
 
@@ -160,11 +160,13 @@ def fetch_via_name(module, version=None, url=None):
                 raise options_exhausted(module, version)
         else:
             return fetch_via_module(python_module, version)
-
     return lib.fetch(module, version, url)
 
 
-def fetch_via_local_index(module):
+def fetch_via_local_index(module, home=Path().home()):
     index = load_attending_index()
+    local_index_file = Path().home() / ".attending" / "index.csv"
+    if local_index_file.exists():
+        index.update(load_index(local_index_file))
     if module in index:
-        fetch_via_name(module, url=index[module])
+        fetch_via_name(module, url=index[module], home=home)
