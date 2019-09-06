@@ -12,7 +12,9 @@ def unpack_docs(working_directory: Path, file: Path):
 
 
 def write_to_file(base_path, module_name, version, url):
-    with request.urlopen(url) as connection:
+    ## Spoof headers to prevent 403: https://medium.com/@speedforcerun/python-crawler-http-error-403-forbidden-1623ae9ba0f
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+    with request.urlopen(request.Request(url=url, headers=headers)) as connection:
         if connection.status == 200:
             if not get_filename(connection):
                 file_extension = get_mapping(connection.getheader('Content-Type'))
