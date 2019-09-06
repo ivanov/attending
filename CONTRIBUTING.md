@@ -4,7 +4,7 @@
 
 ## Goals of the project
 
-*  *Stay lightweight*: depend on as much of the standard library as possible; minimize external dependencies.
+* *Stay lightweight*: depend on as much of the standard library as possible; minimize external dependencies.
 * *Self-serving*: `attending` should manage its own docs; add in a bootstrap option.
 * *Share a cache*: Multiple environments can use the same files.
 
