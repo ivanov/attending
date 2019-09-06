@@ -14,5 +14,7 @@ setup(
 	url='https://github.com/ivanov/attending',
 	packages=['attending'],
 	python_requires='>=3.6',
+	package_data={
+        'attending': ['index.csv'],
+    },
 )
-
