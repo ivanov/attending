@@ -6,8 +6,6 @@ The `attending` supervises other docs, and has the last word.
 
 ## Using
 
-coming soon: `pip install attending`
-
 See [EXAMPLE.md](https://github.com/ivanov/attending/blob/master/EXAMPLE.md) to get started.
 
 Supports Python 3.6 and above!
