@@ -10,6 +10,8 @@ coming soon: `pip install attending`
 
 See [EXAMPLE.md](https://github.com/ivanov/attending/blob/master/EXAMPLE.md) to get started.
 
+Supports Python 3.6 and above!
+
 ## Goal: Improve the quality of resident docs.
 
 It is widely accepted that Python comes with "batteries included", but one could
