@@ -4,7 +4,13 @@ A python package which brings better docstrings with an impeccable bedside manne
 
 The `attending` supervises other docs, and has the last word.
 
-## Improving the quality of resident docs.
+## Using
+
+coming soon: `pip install attending`
+
+See [EXAMPLE.md](https://github.com/ivanov/attending/blob/master/EXAMPLE.md) to get started.
+
+## Goal: Improve the quality of resident docs.
 
 It is widely accepted that Python comes with "batteries included", but one could
 also argue that "instructions mayb not be included" is a fair asssement.
@@ -36,7 +42,6 @@ workshop in 2012](https://youtu.be/QjXJLVINsSA?t=4757), and replied:
     practice of writing good external documentation and instead start writing
     good docstrings. It's one or the other, and we have too large an investment
     in tools that do external documentation really well.
-
 
 ## Why's it called `attending`?
 
