@@ -23,18 +23,7 @@ As a runnable package that allows you to start viewing the docs
 $ python -m attending
 ```
 
-
-# Philosophical pillar
-
-Stay light weight: depend on as much of the standard library as possible,
-minimal external dependencies.
-
-Self Serving: attending should manage its own docs (add in a bootstrap option)
-
-We share a cache of docs so that multiple environments can use the same files. 
-
-
-Version-dependent docstring
+We should add version-dependent docstring?
 
 
 # Maybe
