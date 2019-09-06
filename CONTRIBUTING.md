@@ -16,7 +16,9 @@
 
 ## Testing your changes
 
-Just run `tox`.
+Run `tox`.
+
+[P.S. Read more about tox here](https://tox.readthedocs.io/en/latest/).
 
 Or, you can run `python -m pytest`.
 
