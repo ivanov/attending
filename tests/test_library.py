@@ -1,4 +1,4 @@
-from attending import Library
+from attending import Library, fetch_via_local_index
 import pytest
 from pathlib import Path
 import os
@@ -57,4 +57,13 @@ def test_library_retire(ipython, lib_fixture):
     assert not (lib_fixture / ".attending" / name / version).exists()
 
 
+def test_fetch_vial_local_index(lib_fixture):
+    lib = Library(home=lib_fixture)
+    module = "foobar"
+    version = "latest"
 
+    assert not lib.in_collection(module, version)
+
+    fetch_via_local_index("foobar", home=lib_fixture)
+    assert lib.in_collection(module, version)
+    assert not lib.in_collection(module, "1.0.0")
