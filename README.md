@@ -7,7 +7,7 @@ The `attending` supervises other docs, and has the last word.
 ## Improving the quality of resident docs.
 
 It is widely accepted that Python comes with "batteries included", but one could
-also argue that "instructions mayb not be included" is a fair asssement.
+also argue that "instructions may not be included" is a fair asssement.
 
 The CPython community, which develops reference implementation of the
 language, prefers the cross-referencing and coherent standalone documentation
@@ -26,9 +26,9 @@ this question directly at the first PyData
 workshop in 2012](https://youtu.be/QjXJLVINsSA?t=4757), and replied:
 
     You can't really expect us to write all of the documentation twice. So,
-    we've made a very solid commitment to  having external documentaiton. I'm
-    not entirely sur ehow to build that interactive system but we can generate
-    different formats from the external documentation, its not tied to HTML...
+    we've made a very solid commitment to having external documentation. I'm
+    not entirely sure how to build that interactive system but we can generate
+    different formats from the external documentation, it's not tied to HTML...
 
     ...
 
