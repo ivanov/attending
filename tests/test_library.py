@@ -18,7 +18,12 @@ def lib_fixture():
         shutil.rmtree(base_path)
 
 
-def test_library_fetch(ipython, lib_fixture):
+@pytest.fixture
+def default_folder_name():
+    yield '.attending'
+
+
+def test_library_fetch(ipython, lib_fixture, default_folder_name):
     name, version, __doc_url__ = ipython
 
     # check that library does not have doc
@@ -29,32 +34,32 @@ def test_library_fetch(ipython, lib_fixture):
 
     # get the doc and check that we have it
     lib.fetch(name, version, __doc_url__)
-    assert (lib_fixture / ".attending" / name / version).exists()
+    assert (lib_fixture / default_folder_name / name / version).exists()
     assert lib.get_edition(name, version)
 
     # verifying that getting the doc again is idempotent
     lib.fetch(name, version, __doc_url__)
-    assert (lib_fixture / ".attending" / name / version).exists()
+    assert (lib_fixture / default_folder_name / name / version).exists()
     assert lib.get_edition(name, version)
 
 
-def test_library_retire(ipython, lib_fixture):
+def test_library_retire(ipython, lib_fixture, default_folder_name):
     name, version, __doc_url__ = ipython
     lib = Library(home=lib_fixture)
 
     assert not lib.in_collection(name, version)
     with pytest.raises(KeyError):
         lib.retire(name, version)
-    assert not (lib_fixture / ".attending" / name / version).exists()
+    assert not (lib_fixture / default_folder_name / name / version).exists()
 
     lib.fetch(name, version, __doc_url__)
 
     assert lib.in_collection(name, version)
-    assert (lib_fixture / ".attending" / name / version).exists()
+    assert (lib_fixture / default_folder_name / name / version).exists()
 
     lib.retire(name, version)
     assert not lib.in_collection(name, version)
-    assert not (lib_fixture / ".attending" / name / version).exists()
+    assert not (lib_fixture / default_folder_name / name / version).exists()
 
 
 def test_fetch_vial_local_index(lib_fixture):
