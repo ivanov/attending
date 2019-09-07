@@ -165,7 +165,7 @@ def fetch_via_name(module, version=None, url=None, home=Path().home()):
 
 def fetch_via_local_index(module, home=Path().home()):
     index = load_attending_index()
-    local_index_file = Path().home() / ".attending" / "index.csv"
+    local_index_file = home / ".attending" / "index.csv"
     if local_index_file.exists():
         index.update(load_index(local_index_file))
     if module in index:
