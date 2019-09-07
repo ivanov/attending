@@ -15,6 +15,9 @@ MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 """
 
 
+DEFAULT_FOLDER_NAME = ".attending"
+
+
 def get_module_version(module):
     if hasattr(module, "__version__"):
         return module.__version__
@@ -47,7 +50,7 @@ def options_exhausted(module):
 
 class Library:
     def __init__(self, home=Path().home()):
-        self.location = home / Path(".attending")
+        self.location = home / Path(DEFAULT_FOLDER_NAME)
         if not self.location.exists():
             self.location.mkdir(parents=True)
 
@@ -165,7 +168,7 @@ def fetch_via_name(module, version=None, url=None, home=Path().home()):
 
 def fetch_via_local_index(module, home=Path().home()):
     index = load_attending_index()
-    local_index_file = home / ".attending" / "index.csv"
+    local_index_file = home / DEFAULT_FOLDER_NAME / "index.csv"
     if local_index_file.exists():
         index.update(load_index(local_index_file))
     if module in index:
