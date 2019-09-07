@@ -17,7 +17,6 @@ MONITOR_ERROR = """'{0}' needs both __doc_url__  and __version__ defined. It has
 
 DEFAULT_FOLDER_NAME = ".attending"
 
-
 def get_module_version(module):
     if hasattr(module, "__version__"):
         return module.__version__
@@ -90,6 +89,14 @@ def attending_doc(module, version=None, home=Path().home()):
     else:
         return lib.get_edition(module, version)
 
+
+def contains(module, version=None, home=Path().home()):
+    if version is None:
+        version = get_module_version(module)
+    lib = Library(home=home)
+    if isinstance(module, ModuleType):
+        return lib.in_collection(module.__name__, version)
+    return lib.in_collection(module, version)
 
 def fetch(module, version=None, home=Path().home()):
     """

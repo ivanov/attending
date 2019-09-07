@@ -12,17 +12,13 @@ How to get the docs:
 ```python
 >>> import attending
 >>> import foobar
->>>
->>> from attending import Library
->>>
->>> library = Library()
->>>
->>> foobar in library
+>>> attending.contains(foobar)
 False
->>>
->>> library.fetch(foobar)
-<attending.doc.Doc object at 0x100fb8d68>
->>> foobar in library
+>>> attending.fetch(foobar)
+<attending.doc.Doc object at 0x104656fd0>
+>>> attending.attending_doc(foobar)
+<attending.doc.Doc object at 0x104656fd0>
+>>> attending.contains(foobar)
 True
 ```
 
@@ -42,21 +38,24 @@ How do I read the docs?
 >>> import attending
 >>> import foobar
 >>>
->>> from attending import Library
->>> library = Library()
->>> foobar in library
+>>> attending.contains(foobar)
 True
->>> library[foobar].diagnose()
+>>> attending.attending_doc(foobar).diagnose()
 ```
 
 How do I clean up old docs?
 ```python
 >>> import attending
 >>> import foobar
->>>
->>> from attending import Library
->>> library = Library()
->>> foobar in library
+>>> attending.contains(foobar)
 True
->>> del library[foobar] # or library.retire(foobar)
+>>> attending.attending_doc(foobar).retire()
+>>> attending.attending_doc(foobar)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/John/attending/attending/library.py", line 88, in attending_doc
+    return lib.get_edition(module.__name__, version)
+  File "/Users/John/attending/attending/library.py", line 79, in get_edition
+    raise KeyError
+KeyError
 ```
