@@ -13,7 +13,7 @@ Supports Python 3.6 and above!
 ## Goal: Improve the quality of resident docs.
 
 It is widely accepted that Python comes with "batteries included", but one could
-also argue that "instructions may not be included" is a fair asssement.
+also argue that "instructions may not be included" is a fair assessment.
 
 The CPython community, which develops reference implementation of the
 language, prefers the cross-referencing and coherent standalone documentation
