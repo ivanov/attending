@@ -2,12 +2,17 @@ from pathlib import Path
 from zipfile import ZipFile
 from urllib.parse import urlparse
 from http.client import HTTPResponse
-
+import tarfile
 
 def extract_zip(doc_location: Path, file: Path):
     ZipFile(file).extractall(path=doc_location)
     file.unlink()
 
+def extract_tars(doc_location: Path, file: Path):
+    tar = tarfile.open(file)
+    tar.extractall(path=doc_location)
+    tar.close()
+    file.unlink()
 
 def get_mapping(mime_type):
     return {
@@ -20,7 +25,9 @@ def get_mapping(mime_type):
 
 def get_extractor(file_extension):
     post_directives = {
-        ".zip": extract_zip
+        ".zip": extract_zip, 
+	".tar": extract_tars,
+        ".tar.gz": extract_tars
     }
     if file_extension in post_directives:
         return post_directives[file_extension]
