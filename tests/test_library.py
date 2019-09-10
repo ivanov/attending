@@ -62,7 +62,7 @@ def test_library_retire(ipython, lib_fixture, default_folder_name):
     assert not (lib_fixture / default_folder_name / name / version).exists()
 
 
-def test_fetch_vial_local_index(lib_fixture):
+def test_fetch_via_local_index(lib_fixture):
     lib = Library(home=lib_fixture)
     module = "foobar"
     version = "latest"
